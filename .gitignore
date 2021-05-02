@@ -1,4 +1,7 @@
 
+.vscode/
+node_modules/
+ormconfig.json/
 
-/node_modules
-/ormconfig.json
+tmp/*
+!tmp/.gitkeep
