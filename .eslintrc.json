@@ -17,6 +17,18 @@
   ],
   "rules": {
     "class-methods-use-this":"off" ,
+    "no-useless-constructor": "off",
+     "@typescript-eslint/naming-convention": [
+       "error",
+       {
+         "selector": "interface",
+         "format": ["PascalCase"],
+         "custom": {
+           "regex": "^I[A-Z]", //Essa regra é para colocar I antes do nome da interface
+           "match": true
+         }
+       }
+     ],
     "import/extensions": [
       "error",
       "ignorePackages",

@@ -1,12 +1,11 @@
-import { getCustomRepository } from 'typeorm';
 import { startOfHour } from 'date-fns';
 
 import AppError from '@shared/errors/AppError';
 
 import Appointment from '../infra/typeorm/entities/Appointment';
-import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 
-interface Request {
+interface IRequest {
   providerId: string;
   date: Date;
 }
@@ -17,19 +16,23 @@ interface Request {
 // Dependency Invertion Principle
 
 class CreateAppointmentService {
-  public async execute({ date, providerId }: Request): Promise<Appointment> {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
+  constructor(
+    private appointmentsRepository: IAppointmentsRepository,
+  ) {}
 
+  public async execute({ date, providerId }: IRequest): Promise<Appointment> {
     const appointmentDate = startOfHour(date);
 
-    const findAppointmentInSameDate = await appointmentsRepository.findByDate(appointmentDate);
+    const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(appointmentDate);
 
     if (findAppointmentInSameDate) {
       throw new AppError('This appointment is already booked');
     }
 
-    const appointment = appointmentsRepository.create({ providerId, date: appointmentDate });
-    await appointmentsRepository.save(appointment);
+    const appointment = await this.appointmentsRepository.create({
+      providerId,
+      date: appointmentDate,
+    });
     return appointment;
   }
 }
