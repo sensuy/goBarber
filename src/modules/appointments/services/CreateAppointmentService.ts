@@ -1,4 +1,5 @@
 import { startOfHour } from 'date-fns';
+import { injectable, inject } from 'tsyringe';
 
 import AppError from '@shared/errors/AppError';
 
@@ -15,8 +16,10 @@ interface IRequest {
 // Single Responsability Principle
 // Dependency Invertion Principle
 
+@injectable()
 class CreateAppointmentService {
   constructor(
+    @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
   ) {}
 
