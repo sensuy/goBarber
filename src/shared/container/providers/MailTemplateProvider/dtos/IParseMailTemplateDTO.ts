@@ -1,10 +1,9 @@
 interface ITemplateVariables {
-
   [key: string]: string | number;
 }
 
 interface IParseMailTemplateDTO {
-  template: string;
+  file: string;
   variables: ITemplateVariables
 }
 
