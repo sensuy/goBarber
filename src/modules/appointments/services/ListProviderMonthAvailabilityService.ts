@@ -2,6 +2,7 @@ import IAppointmentsRepository from '@modules/appointments/repositories/IAppoint
 import { injectable, inject } from 'tsyringe';
 
 import User from '@modules/users/infra/typeorm/entities/User';
+import { getDate, getDaysInMonth } from 'date-fns';
 import Appointment from '../infra/typeorm/entities/Appointment';
 
 interface IRequest {
@@ -26,16 +27,33 @@ class ListProviderMonthAvailabilityService {
     providerId,
     month,
     year,
-  }: IRequest): Promise<Appointment[]> {
+  }: IRequest): Promise<IResponse> {
     const appointments = await this.appointmentsRepository.findAllInMonthFromProvider({
       providerId,
       month,
       year,
     });
 
-    console.log(appointments);
+    const numberOfDaysInMonth = getDaysInMonth(new Date(year, month - 1));
 
-    return [{ day: 1, available: false }];
+    const eachDayArray = Array.from(
+      { length: numberOfDaysInMonth },
+      (_, index) => index + 1,
+    );
+
+    const availability = eachDayArray.map((day) => {
+      const appointmentsInDay = appointments.filter(
+        (appointment) => getDate(appointment.date) === day,
+      );
+      return {
+        day,
+        available: appointmentsInDay.length < 10,
+      };
+    });
+
+    console.log(availability);
+
+    return availability;
   }
 }
 
