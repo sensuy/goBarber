@@ -1,8 +1,6 @@
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import { injectable, inject } from 'tsyringe';
 
-import User from '@modules/users/infra/typeorm/entities/User';
-import { getDate, getDaysInMonth } from 'date-fns';
 import Appointment from '../infra/typeorm/entities/Appointment';
 
 interface IRequest {
@@ -13,7 +11,7 @@ interface IRequest {
 }
 
 @injectable()
-class ListProviderMonthAvailabilityService {
+class ListProviderAppointmentsService {
   constructor(
     @inject('AppointmentsRepository')
     private appointmentsRepository: IAppointmentsRepository,
@@ -25,8 +23,15 @@ class ListProviderMonthAvailabilityService {
     month,
     year,
   }: IRequest): Promise<Appointment[]> {
+    const appointments = await this.appointmentsRepository.findAllInDayFromProvider({
+      providerId,
+      year,
+      month,
+      day,
+    });
 
+    return appointments;
   }
 }
 
-export default ListProviderMonthAvailabilityService;
+export default ListProviderAppointmentsService;
